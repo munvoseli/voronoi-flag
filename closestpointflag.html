@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body style="margin: 0">
+<canvas id="canvas" width="2560" height="1440"></canvas>
+<script>
+function sortIntoArray(n, arr) { // you have no idea how long this function took me
+	var upperBound = arr.length; // because I'm an idiot
+	var lowerBound = 0;
+	for (var i = 0; i < 100; i++) {
+		var divBound = Math.floor((upperBound + lowerBound) / 2);
+		if (n < arr[divBound]) {
+			upperBound = divBound;
+		}
+		else { // n >= checked number
+			lowerBound = divBound;
+		}
+		if (upperBound == lowerBound + 1) {
+			return lowerBound;
+		}
+	}
+	console.error("aaah");
+}
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext("2d");
+// 1546 px width inner
+var imageData = new ImageData(canvas.width, canvas.height);
+
+function selectMax(arr) {
+	var max = arr[0];
+	var maxI = 0;
+	var max2 = arr[0];
+	var max2I = 0;
+	for (var i = 1; i < arr.length; i++) {
+		if (arr[i] > max) {
+			max2 = max;
+			max2I = maxI;
+			max = arr[i];
+			maxI = i;
+		}
+	}
+	return [maxI, max2I];
+}
+function qsort(arr) { // [0] is values to sort by, [1] is info
+	if (arr.length <= 1) {
+		return arr;
+	}
+	else {
+		var dif = arr[0][0];
+		var less = [];
+		var equa = [];
+		var more = [];
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i][0] < dif)
+				less.push(arr[i]);
+			else if (arr[i][0] == dif)
+				equa.push(arr[i]);
+			else
+				more.push(arr[i]);
+		}
+		less = qsort(less);
+		more = qsort(more);
+		//console.log(less, more);
+		return less.concat(equa.concat(more));
+	}
+}
+qsort([[0], [1], [5], [3], [2], [3]]);
+
+function Color(x, y, r, g, b, w) {
+	this.x = x * canvas.width;
+	this.y = y * canvas.height;
+	this.r = r;
+	this.g = g;
+	this.b = b;
+	this.w = w;
+}
+var flagString = `
+
+55aaff
+ff55aa
+ffffff
+ff55aa
+55aaff
+
+000000
+777777
+ffffff
+550055
+
+d52d00
+ff9956
+ffffff
+d362a3
+a30261
+
+ffdd00
+ffffff
+aa00aa
+000000
+
+fc75a0
+ffffff
+bd30cc
+000000
+3b47b4
+
+`;
+var flagData = flagString.split(/\n{2,}/g);
+for (var i = 0; i < flagData.length; i++) {
+	if (!flagData[i].length) {
+		flagData.splice(i, 1);
+		i--;
+	}
+}
+var colors = [];
+var flagxdif = 1 / flagData.length;
+var flagxoff = flagxdif / 2;
+var flagx = 0;
+for (var k = 0; k < flagData.length; k++) {
+	var stripes = flagData[k].split("\n");
+	var stripeydif = 1 / stripes.length;
+	var stripeyoff = stripeydif / 2;
+	for (var i = 0; i < stripes.length; i++) {
+		var stripe = stripes[i];
+		var channel = [];
+		for (var j = 0; j < stripe.length; j += 2) {
+			channel.push(parseInt(stripe.substring(j, j + 2), 16));
+		}
+		colors.push(new Color(flagxoff + flagxdif * flagx, stripeyoff + stripeydif * i, channel[0], channel[1], channel[2], Math.random() + 1));
+	}
+	flagx++;
+}
+function lerp(a, b, x) {
+	return a + (b - a) * x;
+}
+function weirdIndex(arr, i) {
+	if (i < 0) {
+		return arr[0];
+	}
+	else if (i >= arr.length - 1) {
+		return arr[arr.length - 1];
+	}
+	else {
+		return lerp(arr[Math.floor(i)], arr[Math.floor(i) + 1], i % 1);
+	}
+}
+function doThingWithNumbers(colors, vals, channel) {
+	return (
+		colors[vals[0][1]][channel] * 4
+	  + colors[vals[1][1]][channel] * 3
+	  + colors[vals[2][1]][channel] * 0
+	  + colors[vals[3][1]][channel] * 2
+	) / 9;
+}
+var interpa = 19;
+function renderFlags() {
+	for (var x = 0; x < canvas.width; x++) {
+		for (var y = 0; y < canvas.height; y++) {
+			var i = (y * canvas.width + x) * 4;
+			var x2, y2;
+			var k;
+			var fx = x;// / (canvas.width - 1);
+			var fy = y;// / (canvas.height - 1);
+			var vals = [];
+			for (var j = 0; j < colors.length; j++) {
+				var dy = Math.abs(fy - colors[j].y);
+				dy = Math.min(dy, canvas.height - dy);
+				var dx = Math.abs(fx - colors[j].x);
+				dx = Math.min(dx, canvas.width - dx);
+				var d2 = dx ** 2 + dy ** 2;
+				vals[j] = [d2 * colors[j].w + Math.random(), j];
+			}
+			//console.log("vals ", vals);
+			vals = qsort(vals);
+			k = [vals[0][1], vals[1][1]];
+			/*imageData.data[i]     = lerp(colors[k[0]].r, colors[k[1]].r, interpa);
+			imageData.data[i + 1] = lerp(colors[k[0]].g, colors[k[1]].g, interpa);
+			imageData.data[i + 2] = lerp(colors[k[0]].b, colors[k[1]].b, interpa);*/
+			/*imageData.data[i]     = weirdIndex(vals.map(x => colors[x[1]].r), interpa);
+			imageData.data[i + 1] = weirdIndex(vals.map(x => colors[x[1]].g), interpa);
+			imageData.data[i + 2] = weirdIndex(vals.map(x => colors[x[1]].b), interpa);*/
+			imageData.data[i]     = doThingWithNumbers(colors, vals, "r");
+			imageData.data[i + 1] = doThingWithNumbers(colors, vals, "g");
+			imageData.data[i + 2] = doThingWithNumbers(colors, vals, "b");
+			imageData.data[i + 3] = 255;
+		}
+	}
+	ctx.putImageData(imageData, 0, 0);
+	//interpa += 1;
+	//setTimeout(renderFlags, 1000);
+}
+renderFlags();
+
+/*
+When you're rife with devastation
+There's a simple explanation:
+You're a toymaker's creation
+Trapped inside a crystal ball
+
+And whichever way he tilts it
+Know that we must be resilient
+We won't let them break our spirits
+As we sing our silly song
+
+When I was a little filly, a galloping blaze overtook my city
+So they shipped me off to the orphanage
+Said, "ditch those roots if you wanna fit in"
+So I dug one thousand holes and cut a rug with orphan foals
+Now memories are blurred, and their faces are obscured
+But I still know the words to this song
+
+When you've bungled all your bangles
+And your loved ones have been mangled
+Listen to the jingle jangle
+Of my gypsy tambourine
+
+Cause these chords are hypnotizing
+And the whole world's harmonizing
+So please children stop your crying
+And just sing along with me
+
+*/
+</script>
+</body>
+</html>
