@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="voronoi.css">
+    <script src="voronoi.js" defer></script>
+  </head>
+  <body>
+    <p>It is highly recommended that you first preview the image at a low resolution, such as 192x108.  On my computer, it takes about 9 seconds to generate a 1920x1080 image with 5 flags.</p>
+    <p>If, for some godforsaken reason, your web browser does not support the &lt;canvas&gt; element, this won't work.</p>
+    <input id="weights" value="12 6 0 3"><br>
+    <input id="input-canvas-width" type="number" placeholder="Width" value="192"><input id="input-canvas-height" type="number" placeholder="Height" value="108"><br>
+    <input id="include-plural" type="checkbox"><label for="include-plural" id="include-plural-label">Include plural rings</label>
+    <div id="add-include-list"></div>
+    <div id="flag-list"></div>
+    <button id="submit-button">Generate</button>
+    <canvas id="canvas"></canvas>
+  </body>
+</html>
