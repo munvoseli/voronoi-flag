@@ -11,8 +11,8 @@ const elFlagList = document.getElementById ("flag-list");
 const elSubmitButton = document.getElementById ("submit-button");
 const elUseVertical = document.getElementById ("flip-xy");
 
-const canvas = document.getElementById ("canvas");
-const ctx = canvas.getContext ("2d");
+
+const elImageOutput = document.getElementById ("image-output");
 
 var presetFlagData = `\
 non-binary
@@ -265,6 +265,8 @@ function getClosestN (aValueAndId, cColor)
     return aOutput;
 }
 
+var canvasWidth, canvasHeight;
+
 class ColorRing
 {
     constructor (x, y, r, colorstr)
@@ -281,10 +283,10 @@ class ColorRing
 	var dx = Math.abs (x - this.x);
 	var dy = Math.abs (y - this.y);
 	// wraparound
-	if (dx * 2 > canvas.width)
-	    dx = canvas.width - dx;
-	if (dy * 2 > canvas.height)
-	    dy = canvas.height - dy;
+	if (dx * 2 > canvasWidth)
+	    dx = canvasWidth - dx;
+	if (dy * 2 > canvasHeight)
+	    dy = canvasHeight - dy;
 	return dx * dx + dy * dy;
     }
     dist (x, y)
@@ -294,7 +296,7 @@ class ColorRing
 }
 
 
-function generatePoints ()
+function generatePoints (width, height)
 {
     var points = [];
     const cCol = presetFlagIncludes.length;
@@ -303,17 +305,17 @@ function generatePoints ()
 	for (var col = 0; col < cCol; ++col)
 	{
 	    const presetIndex = presetFlagIncludes [col];
-	    const x = (col + .5) * canvas.width / cCol;
+	    const x = (col + .5) * width / cCol;
 	    const cRow = presetFlagData [presetIndex].stripes.length;
 	    for (var stripe = 0; stripe < cRow; ++stripe)
 	    {
-		const y = (stripe + .5) * canvas.height / cRow;
+		const y = (stripe + .5) * height / cRow;
 		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
 		points.push (color);
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
 	    {
-		points.push (new ColorRing (x, canvas.height/2, Math.min(canvas.width,canvas.height)/4, "770077"));
+		points.push (new ColorRing (x, height/2, Math.min(width,height)/4, "770077"));
 	    }
 	}
     }
@@ -322,28 +324,28 @@ function generatePoints ()
 	for (var col = 0; col < cCol; ++col)
 	{
 	    const presetIndex = presetFlagIncludes [col];
-	    const y = (col + .5) * canvas.height / cCol;
+	    const y = (col + .5) * height / cCol;
 	    const cRow = presetFlagData [presetIndex].stripes.length;
 	    for (var stripe = 0; stripe < cRow; ++stripe)
 	    {
-		const x = (stripe + .5) * canvas.width / cRow;
+		const x = (stripe + .5) * width / cRow;
 		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
 		points.push (color);
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
 	    {
-		points.push (new ColorRing (canvas.width/2, y, Math.min(canvas.width,canvas.height)/4, "770077"));
+		points.push (new ColorRing (width/2, y, Math.min(width,height)/4, "770077"));
 	    }
 	}
     }
     if (elIncludePlural.checked)
     {
-	var h = Math.min(canvas.width,canvas.height)/6;
+	var h = Math.min(width,height)/6;
 	var r = h * 1.4;
-	points.push (new ColorRing (canvas.width/2    , canvas.height/2 - h, r, "ffff00"));
-	points.push (new ColorRing (canvas.width/2 + h, canvas.height/2    , r, "ff00aa"));
-	points.push (new ColorRing (canvas.width/2    , canvas.height/2 + h, r, "3377ff"));
-	points.push (new ColorRing (canvas.width/2 - h, canvas.height/2    , r, "00cc77"));
+	points.push (new ColorRing (width/2    , height/2 - h, r, "ffff00"));
+	points.push (new ColorRing (width/2 + h, height/2    , r, "ff00aa"));
+	points.push (new ColorRing (width/2    , height/2 + h, r, "3377ff"));
+	points.push (new ColorRing (width/2 - h, height/2    , r, "00cc77"));
     }
     console.log (points);
     return points;
@@ -368,11 +370,13 @@ function doThingWithColors (closestThings, nc, weights, cRelevantColor)
 
 function generateFlag ()
 {
-    canvas.width = Number (elInputWidth.value);
-    canvas.height = Number (elInputHeight.value);
+    const canvas = document.createElement ("canvas");
+    const ctx = canvas.getContext ("2d");
+    canvasWidth = canvas.width = Number (elInputWidth.value);
+    canvasHeight = canvas.height = Number (elInputHeight.value);
     var imageData = new ImageData (canvas.width, canvas.height);
     var data = imageData.data;
-    var distpoints = generatePoints ();
+    var distpoints = generatePoints (canvas.width, canvas.height);
     var weights = loadWeights ();
     for (var i = 0; i < distpoints.length; ++i)
 	distpoints [i] = [-1, distpoints [i]];
@@ -396,6 +400,7 @@ function generateFlag ()
 	}
     }
     ctx.putImageData (imageData, 0, 0);
+    elImageOutput.src = canvas.toDataURL ("image/png");
 }
 
 elSubmitButton.addEventListener ("click", generateFlag, false);
