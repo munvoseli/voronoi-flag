@@ -17,6 +17,42 @@ ffffff
 aa00aa
 000000
 
+demigirl
+808080
+c4c4c4
+feb0ca
+ffffff
+feb0ca
+c4c4c4
+808080
+
+deminonbinary
+808080
+c4c4c4
+fbff75
+ffffff
+fbff75
+c4c4c4
+808080
+
+demiboy
+808080
+c4c4c4
+9bdaeb
+ffffff
+9bdaeb
+c4c4c4
+808080
+
+pangender
+fff798
+feddcc
+ffebfc
+ffffff
+ffebfc
+feddcc
+fff798
+
 genderfluid
 fc75a0
 ffffff
@@ -24,12 +60,67 @@ bd30cc
 000000
 3b47b4
 
-trans
-55aaff
-ff55aa
+genderflux
+f27694
+f2a3b9
+cecece
+7ce0f7
+3ecdf9
+fff48e
+
+agender
+000000
+cccccc
 ffffff
-ff55aa
-55aaff
+b6f4a3
+ffffff
+cccccc
+000000
+
+bigender
+c3789f
+eca6cb
+d4c6e7
+ffffff
+d4c6e7
+9bc6e8
+6d84d0
+
+genderqueer
+b899dd
+ffffff
+6b8e3a
+
+transgender
+55ccff
+ffaabb
+ffffff
+ffaabb
+55ccff
+
+bisexual
+d60270
+d60270
+9b4f96
+0038a3
+0038a3
+
+pansexual
+ff1b8d
+ffd900
+1bb3ff
+
+polysexual
+f61cb9
+06d569
+1c92f6
+
+abrosexual
+75ca92
+b2e4c5
+ffffff
+e695b5
+da446c
 
 asexual (5-stripe, nonstandard)
 000000
@@ -44,7 +135,7 @@ asexual
 ffffff
 770077
 
-aro
+aromantic
 33aa33
 aaff88
 ffffff
@@ -110,6 +201,7 @@ function initiatePresetButtons ()
 	elAddInclude.appendChild (button);
 	++i;
     }
+    elAddInclude.appendChild (document.createElement ("br"));
     let button = document.createElement ("button");
     button.innerHTML = "Clear all flags";
     button.addEventListener ("click", clearAllPresets, false);
