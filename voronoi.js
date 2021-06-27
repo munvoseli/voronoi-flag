@@ -5,8 +5,12 @@ const elInputWidth = document.getElementById ("input-canvas-width");
 const elInputHeight = document.getElementById ("input-canvas-height");
 const elIncludePlural = document.getElementById ("include-plural");
 const elAddInclude = document.getElementById ("add-include-list");
+const elCustomAddButton = document.getElementById ("custom-add-button");
+const elCustomAddTextarea = document.getElementById ("custom-add-textarea");
 const elFlagList = document.getElementById ("flag-list");
 const elSubmitButton = document.getElementById ("submit-button");
+const elUseVertical = document.getElementById ("flip-xy");
+
 const canvas = document.getElementById ("canvas");
 const ctx = canvas.getContext ("2d");
 
@@ -171,13 +175,18 @@ var presetFlagIncludes = [];
 
 // I am almost certain there must be a better way
 // i do not know the better way
-function handleAddPreset (e)
+
+function handleAddPresetId (nPreset)
 {
-    const nPreset = e.currentTarget.nPreset;
     let p = document.createElement ("p");
     p.innerHTML = presetFlagData [nPreset].title;
     presetFlagIncludes.push (nPreset);
     elFlagList.appendChild (p);
+}
+
+function handleAddPreset (e)
+{
+    handleAddPresetId (e.currentTarget.nPreset);
 }
 
 function clearAllPresets ()
@@ -187,18 +196,23 @@ function clearAllPresets ()
     presetFlagIncludes = [];
 }
 
+function makePresetButton (i)
+{
+    let button = document.createElement ("button");
+    //button.innerHTML = "Add " + preset.title + " flag";
+    button.innerHTML = presetFlagData [i].title;
+    button.nPreset = i;
+    button.addEventListener ("click", handleAddPreset, false);
+    elAddInclude.appendChild (button);
+}
+
 function initiatePresetButtons ()
 {
     presetFlagIncludes = [];
     var i = 0;
     for (var preset of presetFlagData)
     {
-	let button = document.createElement ("button");
-	//button.innerHTML = "Add " + preset.title + " flag";
-	button.innerHTML = preset.title;
-	button.nPreset = i;
-	button.addEventListener ("click", handleAddPreset, false);
-	elAddInclude.appendChild (button);
+	makePresetButton (i);
 	++i;
     }
     elAddInclude.appendChild (document.createElement ("br"));
@@ -206,8 +220,22 @@ function initiatePresetButtons ()
     button.innerHTML = "Clear all flags";
     button.addEventListener ("click", clearAllPresets, false);
     elAddInclude.appendChild (button);
+    elAddInclude.appendChild (document.createElement ("br"));
 }
 initiatePresetButtons ();
+
+function addCustomPreset ()
+{
+    var str = elCustomAddTextarea.value;
+    if (!str)
+	return;
+    var id = presetFlagData.length;
+    presetFlagData [id] = {title: "custom" + id, stripes: str.split ("\n")};
+    makePresetButton (id);
+    handleAddPresetId (id);
+}
+
+elCustomAddButton.addEventListener ("click", addCustomPreset, false);
 
 // basically insertion sort, but only get like 5 minimal ones
 // why this was chosen instead of qsort:
@@ -270,20 +298,42 @@ function generatePoints ()
 {
     var points = [];
     const cCol = presetFlagIncludes.length;
-    for (var col = 0; col < cCol; ++col)
+    if (!elUseVertical.checked)
     {
-	const presetIndex = presetFlagIncludes [col];
-	const x = (col + .5) * canvas.width / cCol;
-	const cRow = presetFlagData [presetIndex].stripes.length;
-	for (var stripe = 0; stripe < cRow; ++stripe)
+	for (var col = 0; col < cCol; ++col)
 	{
-	    const y = (stripe + .5) * canvas.height / cRow;
-	    const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
-	    points.push (color);
+	    const presetIndex = presetFlagIncludes [col];
+	    const x = (col + .5) * canvas.width / cCol;
+	    const cRow = presetFlagData [presetIndex].stripes.length;
+	    for (var stripe = 0; stripe < cRow; ++stripe)
+	    {
+		const y = (stripe + .5) * canvas.height / cRow;
+		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
+		points.push (color);
+	    }
+	    if (presetIndex == PRESET_INTERSEX)
+	    {
+		points.push (new ColorRing (x, canvas.height/2, Math.min(canvas.width,canvas.height)/4, "770077"));
+	    }
 	}
-	if (presetIndex == PRESET_INTERSEX)
+    }
+    else
+    {
+	for (var col = 0; col < cCol; ++col)
 	{
-	    points.push (new ColorRing (x, canvas.height/2, Math.min(canvas.width,canvas.height)/4, "770077"));
+	    const presetIndex = presetFlagIncludes [col];
+	    const y = (col + .5) * canvas.height / cCol;
+	    const cRow = presetFlagData [presetIndex].stripes.length;
+	    for (var stripe = 0; stripe < cRow; ++stripe)
+	    {
+		const x = (stripe + .5) * canvas.width / cRow;
+		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
+		points.push (color);
+	    }
+	    if (presetIndex == PRESET_INTERSEX)
+	    {
+		points.push (new ColorRing (canvas.width/2, y, Math.min(canvas.width,canvas.height)/4, "770077"));
+	    }
 	}
     }
     if (elIncludePlural.checked)
