@@ -10,8 +10,6 @@ const elCustomAddTextarea = document.getElementById ("custom-add-textarea");
 const elFlagList = document.getElementById ("flag-list");
 const elSubmitButton = document.getElementById ("submit-button");
 const elUseVertical = document.getElementById ("flip-xy");
-
-
 const elImageOutput = document.getElementById ("image-output");
 
 var presetFlagData = `\
@@ -296,7 +294,7 @@ class ColorRing
 }
 
 
-function generatePoints (width, height)
+function generatePoints ()
 {
     var points = [];
     const cCol = presetFlagIncludes.length;
@@ -305,17 +303,17 @@ function generatePoints (width, height)
 	for (var col = 0; col < cCol; ++col)
 	{
 	    const presetIndex = presetFlagIncludes [col];
-	    const x = (col + .5) * width / cCol;
+	    const x = (col + .5) * canvasWidth / cCol;
 	    const cRow = presetFlagData [presetIndex].stripes.length;
 	    for (var stripe = 0; stripe < cRow; ++stripe)
 	    {
-		const y = (stripe + .5) * height / cRow;
+		const y = (stripe + .5) * canvasHeight / cRow;
 		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
 		points.push (color);
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
 	    {
-		points.push (new ColorRing (x, height/2, Math.min(width,height)/4, "770077"));
+		points.push (new ColorRing (x, canvasHeight/2, Math.min(canvasWidth,canvasHeight)/4, "770077"));
 	    }
 	}
     }
@@ -324,28 +322,28 @@ function generatePoints (width, height)
 	for (var col = 0; col < cCol; ++col)
 	{
 	    const presetIndex = presetFlagIncludes [col];
-	    const y = (col + .5) * height / cCol;
+	    const y = (col + .5) * canvasHeight / cCol;
 	    const cRow = presetFlagData [presetIndex].stripes.length;
 	    for (var stripe = 0; stripe < cRow; ++stripe)
 	    {
-		const x = (stripe + .5) * width / cRow;
+		const x = (stripe + .5) * canvasWidth / cRow;
 		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
 		points.push (color);
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
 	    {
-		points.push (new ColorRing (width/2, y, Math.min(width,height)/4, "770077"));
+		points.push (new ColorRing (canvasWidth/2, y, Math.min(canvasWidth,canvasHeight)/4, "770077"));
 	    }
 	}
     }
     if (elIncludePlural.checked)
     {
-	var h = Math.min(width,height)/6;
+	var h = Math.min(canvasWidth,canvasHeight)/6;
 	var r = h * 1.4;
-	points.push (new ColorRing (width/2    , height/2 - h, r, "ffff00"));
-	points.push (new ColorRing (width/2 + h, height/2    , r, "ff00aa"));
-	points.push (new ColorRing (width/2    , height/2 + h, r, "3377ff"));
-	points.push (new ColorRing (width/2 - h, height/2    , r, "00cc77"));
+	points.push (new ColorRing (canvasWidth/2    , canvasHeight/2 - h, r, "ffff00"));
+	points.push (new ColorRing (canvasWidth/2 + h, canvasHeight/2    , r, "ff00aa"));
+	points.push (new ColorRing (canvasWidth/2    , canvasHeight/2 + h, r, "3377ff"));
+	points.push (new ColorRing (canvasWidth/2 - h, canvasHeight/2    , r, "00cc77"));
     }
     console.log (points);
     return points;
@@ -370,13 +368,13 @@ function doThingWithColors (closestThings, nc, weights, cRelevantColor)
 
 function generateFlag ()
 {
-    const canvas = document.createElement ("canvas");
-    const ctx = canvas.getContext ("2d");
+    var canvas = document.createElement ("canvas");
+    var ctx = canvas.getContext ("2d");
     canvasWidth = canvas.width = Number (elInputWidth.value);
     canvasHeight = canvas.height = Number (elInputHeight.value);
     var imageData = new ImageData (canvas.width, canvas.height);
     var data = imageData.data;
-    var distpoints = generatePoints (canvas.width, canvas.height);
+    var distpoints = generatePoints ();
     var weights = loadWeights ();
     for (var i = 0; i < distpoints.length; ++i)
 	distpoints [i] = [-1, distpoints [i]];
