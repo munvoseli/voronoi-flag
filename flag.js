@@ -96,19 +96,37 @@ ffffff
 aaaaaa
 000000
 
-lesbian (5-stripe)
+lesbian
 d52d00
 ff9956
 ffffff
 d362a3
 a30261
 
-gay man (5-stripe)
+gay man
 11aa77
 55ddcc
 ffffff
 55aaff
 113355
+
+# 6-stripe
+
+genderflux
+f27694
+f2a3b9
+cecece
+7ce0f7
+3ecdf9
+fff48e
+
+rainbow
+e40001
+fe8a01
+f8eb00
+007e24
+004bfe
+740585
 
 # 7-stripe
 
@@ -147,14 +165,6 @@ ffffff
 ffebfc
 feddcc
 fff798
-
-genderflux
-f27694
-f2a3b9
-cecece
-7ce0f7
-3ecdf9
-fff48e
 
 agender
 000000
