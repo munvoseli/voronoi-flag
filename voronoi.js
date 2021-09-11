@@ -50,8 +50,6 @@ function getClosestN (aValueAndId, cColor)
     return aOutput;
 }
 
-var canvasWidth, canvasHeight;
-
 class ColorRing
 {
     constructor (x, y, r, colorstr)
@@ -69,9 +67,9 @@ class ColorRing
 	var dy = Math.abs (y - this.y);
 	// wraparound
 	if (dx * 2 > cw)
-	    dx = canvasWidth - dx;
+	    dx = cw - dx;
 	if (dy * 2 > ch)
-	    dy = canvasHeight - dy;
+	    dy = ch - dy;
 	return dx * dx + dy * dy;
     }
     dist (x, y, cw, ch)
@@ -96,7 +94,6 @@ function doThingWithColors (closestThings, nc, weights, cRelevantColor)
 // var weights = loadWeights ();
 function doVoronoiWithPoints (distpoints, weights, elImageOut, canvasWidth, canvasHeight)
 {
-    console.log (canvasWidth, canvasHeight);
     var canvas = document.createElement ("canvas");
     var ctx = canvas.getContext ("2d");
     canvas.width = canvasWidth;
