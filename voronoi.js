@@ -85,22 +85,31 @@ class ColorRing
     }
 }
 
-
-
-function doThingWithColors (closestThings, nc, weights, cRelevantColor)
+function doThingWithColorsDefault (closestThings, nc, weights, cRelevantColor)
 {
     var sum = 0;
     for (var i = 0; i < cRelevantColor; ++i)
 	sum += weights [i] * closestThings [i] [1].color [nc];
-    // it's really cool if you uncomment this
-    // might have to add an option for it
-    /*sum += (Math.random() - .3) * 50;
+    return sum;
+}
+
+function doThingWithColorsWow (closestThings, nc, weights, cRelevantColor)
+{
+    var sum = 0;
+    for (var i = 0; i < cRelevantColor; ++i)
+	sum += weights [i] * closestThings [i] [1].color [nc];
+    sum += (Math.random() - .5) * 50;
     if (sum > 255)
 	sum = 255;
     else if (sum < 0)
-	sum = 0;*/
+	sum = 0;
     return sum;
 }
+
+
+
+function doThingWithColors () {};
+doThingWithColors = doThingWithColorsDefault;
 
 
 

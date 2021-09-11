@@ -11,6 +11,7 @@ const elFlagList = document.getElementById ("flag-list");
 const elSubmitButton = document.getElementById ("submit-button");
 const elUseVertical = document.getElementById ("flip-xy");
 const elImageOutput = document.getElementById ("image-output");
+const elWow = document.getElementById ("wow");
 
 var presetFlagData = `\
 non-binary
@@ -304,7 +305,7 @@ function generateFlagImage ()
     var canvasHeight = Number (elInputHeight.value);
     var distpoints = generatePoints (canvasWidth, canvasHeight);
     var weights = loadWeights ();
-    console.log (weights);
+    doThingWithColors = elWow.checked ? doThingWithColorsWow : doThingWithColorsDefault;
     if (distpoints.length > 1 && weights.length > 0)
 	doVoronoiOptimized (distpoints, weights, elImageOutput, canvasWidth, canvasHeight);
     console.log (Date.now() - date + " ms");
