@@ -297,10 +297,28 @@ function loadWeights ()
 }
 
 
-elSubmitButton.addEventListener ("click", function() {
+function generateFlagImage ()
+{
+    var date = Date.now();
     var canvasWidth = Number (elInputWidth.value);
     var canvasHeight = Number (elInputHeight.value);
     var distpoints = generatePoints (canvasWidth, canvasHeight);
     var weights = loadWeights ();
-    doVoronoiWithPoints (distpoints, weights, elImageOutput, canvasWidth, canvasHeight);
+    doVoronoiOptimized (distpoints, weights, elImageOutput, canvasWidth, canvasHeight);
+    console.log (Date.now() - date + " ms");
+}
+
+elSubmitButton.addEventListener ("click", function() {
+    generateFlagImage ();
 }, false);
+
+
+/*
+// for testing
+handleAddPresetId (10);
+handleAddPresetId (16);
+handleAddPresetId (18);
+handleAddPresetId (0);
+handleAddPresetId (5);
+generateFlagImage ();
+*/
