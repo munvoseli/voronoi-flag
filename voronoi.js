@@ -14,6 +14,8 @@
 
 function loadWeightsFromString (str)
 {
+    if (!str)
+	return [1];
     var weights = str.split (" ").map (x => Number (x));
     var weightSum = weights.reduce ((a, b) => a + b);
     weights = weights.map (x => x / weightSum);
@@ -90,6 +92,13 @@ function doThingWithColors (closestThings, nc, weights, cRelevantColor)
     var sum = 0;
     for (var i = 0; i < cRelevantColor; ++i)
 	sum += weights [i] * closestThings [i] [1].color [nc];
+    // it's really cool if you uncomment this
+    // might have to add an option for it
+    /*sum += (Math.random() - .3) * 50;
+    if (sum > 255)
+	sum = 255;
+    else if (sum < 0)
+	sum = 0;*/
     return sum;
 }
 
@@ -133,12 +142,12 @@ function doVoronoiWithPoints (distpoints, weights, elImageOut, canvasWidth, canv
 
 function fillSquare (x0, y0, l, data, color, canvasWidth, canvasHeight)
 {
-    var xf = Math.min(x0 + l, canvasWidth - 1);
-    var yf = Math.min(y0 + l, canvasHeight - 1);;
+    var xf = Math.min (x0 + l, canvasWidth - 1);
+    var yf = Math.min (y0 + l, canvasHeight - 1);
     var pixChannelIndex;
     for (var y = y0; y <= yf; ++y)
     {
-	pixChannelIndex = (y0 * canvasWidth + x0) * 4;
+	pixChannelIndex = (y * canvasWidth + x0) * 4;
 	for (var x = x0; x <= xf; ++x)
 	{
 	    data [  pixChannelIndex] = color [0];
@@ -161,6 +170,7 @@ function getMinimumLength (distpoints)
 }
 
 // this optimization assumes a euclidian-ish calculation for distance to the nearest point
+// it also assumes that you have at least 2 points
 function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canvasHeight)
 {
     var canvas = document.createElement ("canvas");
@@ -191,13 +201,14 @@ function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canva
 	    squareColor [0] = doThingWithColors (closestThings, 0, weights, cRelevantColor);
 	    squareColor [1] = doThingWithColors (closestThings, 1, weights, cRelevantColor);
 	    squareColor [2] = doThingWithColors (closestThings, 2, weights, cRelevantColor);
-	    //dist = dist >> 1;
-	    dist = Math.floor (dist / 2);
+	    dist = dist >> 2;
+	    //dist = Math.floor (dist / 2);
 	    fillSquare (x, y, dist, data, squareColor, canvas.width, canvas.height);
 	    ++nSquares;
 	}
     }
     console.log (nSquares + " squares");
+    console.log ((canvas.width * canvas.height / nSquares) + " pixels per square (avg)");
     ctx.putImageData (imageData, 0, 0);
     elImageOut.src = canvas.toDataURL ("image/png");
 }
