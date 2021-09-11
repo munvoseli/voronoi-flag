@@ -304,7 +304,9 @@ function generateFlagImage ()
     var canvasHeight = Number (elInputHeight.value);
     var distpoints = generatePoints (canvasWidth, canvasHeight);
     var weights = loadWeights ();
-    doVoronoiOptimized (distpoints, weights, elImageOutput, canvasWidth, canvasHeight);
+    console.log (weights);
+    if (distpoints.length > 1 && weights.length > 0)
+	doVoronoiOptimized (distpoints, weights, elImageOutput, canvasWidth, canvasHeight);
     console.log (Date.now() - date + " ms");
 }
 
