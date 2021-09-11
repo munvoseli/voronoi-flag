@@ -1,3 +1,5 @@
+'use strict';
+
 const elWeights = document.getElementById ("weights");
 const elInputWidth = document.getElementById ("input-canvas-width");
 const elInputHeight = document.getElementById ("input-canvas-height");
