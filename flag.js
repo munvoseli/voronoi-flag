@@ -14,11 +14,103 @@ const elImageOutput = document.getElementById ("image-output");
 const elWow = document.getElementById ("wow");
 
 var presetFlagData = `\
+# 0-stripe
+
+intersex
+ffff00
+ffff00
+ffff00
+
+# 3-stripe
+
+genderqueer
+b899dd
+ffffff
+6b8e3a
+
+bisexual
+d60270
+d60270
+9b4f96
+0038a3
+0038a3
+
+pansexual
+ff1b8d
+ffd900
+1bb3ff
+
+polysexual
+f61cb9
+06d569
+1c92f6
+
+# 4-stripe
+
 non-binary
 ffdd00
 ffffff
 aa00aa
 000000
+
+asexual
+000000
+777777
+ffffff
+770077
+
+# 5-stripe
+
+genderfluid
+fc75a0
+ffffff
+bd30cc
+000000
+3b47b4
+
+transgender
+55ccff
+ffaabb
+ffffff
+ffaabb
+55ccff
+
+abrosexual
+75ca92
+b2e4c5
+ffffff
+e695b5
+da446c
+
+asexual
+000000
+777777
+ffffff
+aa33aa
+660066
+
+aromantic
+33aa33
+aaff88
+ffffff
+aaaaaa
+000000
+
+lesbian (5-stripe)
+d52d00
+ff9956
+ffffff
+d362a3
+a30261
+
+gay man (5-stripe)
+11aa77
+55ddcc
+ffffff
+55aaff
+113355
+
+# 7-stripe
 
 demigirl
 808080
@@ -56,13 +148,6 @@ ffebfc
 feddcc
 fff798
 
-genderfluid
-fc75a0
-ffffff
-bd30cc
-000000
-3b47b4
-
 genderflux
 f27694
 f2a3b9
@@ -89,80 +174,7 @@ d4c6e7
 9bc6e8
 6d84d0
 
-genderqueer
-b899dd
-ffffff
-6b8e3a
-
-transgender
-55ccff
-ffaabb
-ffffff
-ffaabb
-55ccff
-
-bisexual
-d60270
-d60270
-9b4f96
-0038a3
-0038a3
-
-pansexual
-ff1b8d
-ffd900
-1bb3ff
-
-polysexual
-f61cb9
-06d569
-1c92f6
-
-abrosexual
-75ca92
-b2e4c5
-ffffff
-e695b5
-da446c
-
-asexual (5-stripe, nonstandard)
-000000
-777777
-ffffff
-aa33aa
-660066
-
-asexual
-000000
-777777
-ffffff
-770077
-
-aromantic
-33aa33
-aaff88
-ffffff
-aaaaaa
-000000
-
-lesbian (5-stripe)
-d52d00
-ff9956
-ffffff
-d362a3
-a30261
-
-gay man (5-stripe)
-11aa77
-55ddcc
-ffffff
-55aaff
-113355
-
-intersex
-ffff00
-ffff00
-ffff00
+# Control
 
 [spacer]`.split ("\n\n").map (function (str) {const i = str.indexOf ("\n"); return i < 0 ? {title: str, stripes: []} : {title: str.substring (0, i), stripes: str.substring (i+1).split("\n")}});
 
@@ -205,13 +217,33 @@ function makePresetButton (i)
     elAddInclude.appendChild (button);
 }
 
+function makePresetSection (i)
+{
+    elAddInclude.appendChild (document.createElement ("br"));
+    let elSec = document.createElement ("h3");
+    var num = 0;
+    var str = presetFlagData [i].title;
+    while (str [num] == "#" || str [num] == " ")
+	++num;
+    elSec.innerHTML = str.substr (num);
+    elAddInclude.appendChild (elSec);
+}
+
+function handlePresetIndex (i)
+{
+    if (presetFlagData [i].title [0] == "#")
+	makePresetSection (i);
+    else
+	makePresetButton (i);
+}
+
 function initiatePresetButtons ()
 {
     presetFlagIncludes = [];
     var i = 0;
     for (var preset of presetFlagData)
     {
-	makePresetButton (i);
+	handlePresetIndex (i);
 	++i;
     }
     elAddInclude.appendChild (document.createElement ("br"));
