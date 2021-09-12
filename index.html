@@ -8,21 +8,25 @@
     <script src="flag.js" defer></script>
   </head>
   <body>
-    <p>Demisexual and demiromantic were not forgotten, but I'm not quite sure how to do the triangle.  There were a whole lot of things I have not included, but for those, the custom tool may be used.</p>
-    <p>Some flags, such as the 5-stripe asexual flag, are not standard, and exist solely because they were useful in some situations.</p>
-    <div id="general-settings">
-      <input id="weights" value="12 6 0 3"><br>
-      <input id="input-canvas-width" type="number" placeholder="Width" value="384"><input id="input-canvas-height" type="number" placeholder="Height" value="216"><br>
-      <input id="flip-xy" type="checkbox"><label for="flip-xy" id="flip-xy-label">Use vertical stripes / flip flags over xy</label><br>
-      <input id="include-plural" type="checkbox"><label for="include-plural" id="include-plural-label">Include plural rings</label><br>
-      <input id="wow" type="checkbox"><label for="wow" id="wow-label">wow</label>
+    <p>Demisexual and demiromantic were not forgotten, but I'm not quite sure how to do the triangle.  For stripe-based flagss that I have not included, the custom tool may be used.</p>
+    <p>Some flags, such as the 5-stripe asexual flag, are not standard, and exist solely because they can be artistically useful.</p>
+    <div id="tool">
+      <div id="add-include-list"></div>
+      <div id="general-settings">
+	<input id="weights" value="12 6 0 3"><label for="weights">Weights</label><br>
+	<input id="input-canvas-width" type="number" placeholder="Width" value="384"><label for="input-canvas-width">Width</label><br>
+	<input id="input-canvas-height" type="number" placeholder="Height" value="216"><label for="input-canvas-height">Height</label><br>
+	<input id="flip-xy" type="checkbox"><label for="flip-xy" id="flip-xy-label">Use vertical stripes / flip flags over xy</label><br>
+	<input id="include-plural" type="checkbox"><label for="include-plural" id="include-plural-label">Include plural rings</label><br>
+	<input id="wow" type="checkbox"><label for="wow" id="wow-label">wow</label>
+      </div>
+      <div id="custom-add-div"><textarea id="custom-add-textarea">ffffff&#10;ffffff</textarea><button id="custom-add-button">Add custom flag</button></div>
+      <div id="flag-controls">
+	<button id="clear-flags-button">Clear all flags</button>
+	<button id="submit-button">Generate</button>
+      </div>
+      <img id="image-output" alt="Image output">
+      <div id="flag-list"></div>
     </div>
-    <div id="custom-add-div"><textarea id="custom-add-textarea">ffffff&#10;ffffff</textarea><button id="custom-add-button">custom</button></div>
-    <div id="add-include-list"></div>
-    <div id="flag-list"></div>
-    <div id="flag-controls">
-      <button id="submit-button">Generate</button>
-    </div>
-    <img id="image-output">
   </body>
 </html>

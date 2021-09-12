@@ -5,18 +5,33 @@
 
 img {
     display: block;
+    width: 640px;
+    max-width: 100%;
 }
 
 h3 {
     display: inline;
 }
 
-body>div {
+#tool {
+    background-color: #ccc;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+#tool>div {
     background-color: #aaa;
     margin: 1em;
     padding: 1em;
 }
 
 #flag-list>span {
+    display: inline-block;
     margin: 1em;
+}
+
+#add-include-list {
+    width: 100%;
+    min-width: 500px;
 }

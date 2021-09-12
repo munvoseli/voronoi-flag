@@ -13,6 +13,7 @@ const elUseVertical = document.getElementById ("flip-xy");
 const elImageOutput = document.getElementById ("image-output");
 const elWow = document.getElementById ("wow");
 const elFlagControls = document.getElementById ("flag-controls");
+const elClearFlagsButton = document.getElementById ("clear-flags-button");
 
 var presetFlagData = `\
 # 0-stripe
@@ -284,10 +285,10 @@ function initiatePresetButtons ()
 	++i;
     }
     //elAddInclude.appendChild (document.createElement ("br"));
-    let button = document.createElement ("button");
-    button.innerHTML = "Clear all flags";
-    button.addEventListener ("click", clearAllPresets, false);
-    elFlagControls.appendChild (button);
+    //let button = document.createElement ("button");
+    //button.innerHTML = "Clear all flags";
+    elClearFlagsButton.addEventListener ("click", clearAllPresets, false);
+    //elFlagControls.appendChild (button);
     //elAddInclude.appendChild (document.createElement ("br"));
 }
 
