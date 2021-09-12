@@ -256,7 +256,8 @@ function makePresetButton (flagIndex)
 
 function makePresetSection (i)
 {
-    elAddInclude.appendChild (document.createElement ("br"));
+    if (i)
+	elAddInclude.appendChild (document.createElement ("br"));
     let elSec = document.createElement ("h3");
     var num = 0;
     var str = presetFlagData [i];
