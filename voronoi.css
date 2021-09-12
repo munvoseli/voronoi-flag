@@ -10,3 +10,13 @@ img {
 h3 {
     display: inline;
 }
+
+body>div {
+    background-color: #aaa;
+    margin: 1em;
+    padding: 1em;
+}
+
+#flag-list>span {
+    margin: 1em;
+}

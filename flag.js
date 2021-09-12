@@ -12,6 +12,7 @@ const elSubmitButton = document.getElementById ("submit-button");
 const elUseVertical = document.getElementById ("flip-xy");
 const elImageOutput = document.getElementById ("image-output");
 const elWow = document.getElementById ("wow");
+const elFlagControls = document.getElementById ("flag-controls");
 
 var presetFlagData = `\
 # 0-stripe
@@ -184,13 +185,38 @@ d4c6e7
 9bc6e8
 6d84d0
 
-# Control
+# Other
 
-[spacer]`.split ("\n\n").map (function (str) {const i = str.indexOf ("\n"); return i < 0 ? {title: str, stripes: []} : {title: str.substring (0, i), stripes: str.substring (i+1).split("\n")}});
+[spacer]`.split ("\n\n");
+
+function flagFromStr (str)
+{
+    const i = str.indexOf ("\n");
+    if (i < 0)
+	return {title: str, stripes: []};
+    else
+	return {title: str.substring (0, i), stripes: str.substring (i+1).split("\n")};
+}
+
+var presetFlagArray = [];
 
 var PRESET_INTERSEX = 0;
-while (presetFlagData [PRESET_INTERSEX].title != "intersex")
-    ++PRESET_INTERSEX;
+
+function loadPresetFlagArray ()
+{
+    for (var presetString of presetFlagData)
+    {
+	if (presetString [0] != "#")
+	{
+	    var flag = flagFromStr (presetString);
+	    presetFlagArray.push (flag);
+	}
+    }
+    while (presetFlagArray [PRESET_INTERSEX].title != "intersex")
+	++PRESET_INTERSEX;
+}
+
+
 
 var presetFlagIncludes = [];
 
@@ -199,8 +225,8 @@ var presetFlagIncludes = [];
 
 function handleAddPresetId (nPreset)
 {
-    let p = document.createElement ("p");
-    p.innerHTML = presetFlagData [nPreset].title;
+    let p = document.createElement ("span");
+    p.innerHTML = presetFlagArray [nPreset].title;
     presetFlagIncludes.push (nPreset);
     elFlagList.appendChild (p);
 }
@@ -217,12 +243,12 @@ function clearAllPresets ()
     presetFlagIncludes = [];
 }
 
-function makePresetButton (i)
+function makePresetButton (flagIndex)
 {
     let button = document.createElement ("button");
     //button.innerHTML = "Add " + preset.title + " flag";
-    button.innerHTML = presetFlagData [i].title;
-    button.nPreset = i;
+    button.innerHTML = presetFlagArray [flagIndex].title;
+    button.nPreset = flagIndex;
     button.addEventListener ("click", handleAddPreset, false);
     elAddInclude.appendChild (button);
 }
@@ -232,37 +258,40 @@ function makePresetSection (i)
     elAddInclude.appendChild (document.createElement ("br"));
     let elSec = document.createElement ("h3");
     var num = 0;
-    var str = presetFlagData [i].title;
+    var str = presetFlagData [i];
     while (str [num] == "#" || str [num] == " ")
 	++num;
     elSec.innerHTML = str.substr (num);
     elAddInclude.appendChild (elSec);
 }
 
-function handlePresetIndex (i)
-{
-    if (presetFlagData [i].title [0] == "#")
-	makePresetSection (i);
-    else
-	makePresetButton (i);
-}
-
 function initiatePresetButtons ()
 {
     presetFlagIncludes = [];
     var i = 0;
+    var flagIndex = 0;
     for (var preset of presetFlagData)
     {
-	handlePresetIndex (i);
+	if (preset [0] == "#")
+	{
+	    makePresetSection (i);
+	}
+	else
+	{
+	    makePresetButton (flagIndex);
+	    ++flagIndex;
+	}
 	++i;
     }
-    elAddInclude.appendChild (document.createElement ("br"));
+    //elAddInclude.appendChild (document.createElement ("br"));
     let button = document.createElement ("button");
     button.innerHTML = "Clear all flags";
     button.addEventListener ("click", clearAllPresets, false);
-    elAddInclude.appendChild (button);
-    elAddInclude.appendChild (document.createElement ("br"));
+    elFlagControls.appendChild (button);
+    //elAddInclude.appendChild (document.createElement ("br"));
 }
+
+loadPresetFlagArray ();
 initiatePresetButtons ();
 
 function addCustomPreset ()
@@ -271,9 +300,11 @@ function addCustomPreset ()
     if (!str)
 	return;
     var id = presetFlagData.length;
-    presetFlagData [id] = {title: "custom" + id, stripes: str.split ("\n")};
-    makePresetButton (id);
-    handleAddPresetId (id);
+    var flagIndex = presetFlagArray.length;
+    presetFlagArray [flagIndex] = {title: "custom" + flagIndex, stripes: str.split ("\n")};
+
+    makePresetButton (flagIndex);
+    handleAddPresetId (flagIndex);
 }
 
 elCustomAddButton.addEventListener ("click", addCustomPreset, false);
@@ -289,11 +320,11 @@ function generatePoints (canvasWidth, canvasHeight)
 	{
 	    const presetIndex = presetFlagIncludes [col];
 	    const x = (col + .5) * canvasWidth / cCol;
-	    const cRow = presetFlagData [presetIndex].stripes.length;
+	    const cRow = presetFlagArray [presetIndex].stripes.length;
 	    for (var stripe = 0; stripe < cRow; ++stripe)
 	    {
 		const y = (stripe + .5) * canvasHeight / cRow;
-		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
+		const color = new ColorRing (x, y, 0, presetFlagArray [presetIndex].stripes [stripe]);
 		points.push (color);
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
@@ -308,11 +339,11 @@ function generatePoints (canvasWidth, canvasHeight)
 	{
 	    const presetIndex = presetFlagIncludes [col];
 	    const y = (col + .5) * canvasHeight / cCol;
-	    const cRow = presetFlagData [presetIndex].stripes.length;
+	    const cRow = presetFlagArray [presetIndex].stripes.length;
 	    for (var stripe = 0; stripe < cRow; ++stripe)
 	    {
 		const x = (stripe + .5) * canvasWidth / cRow;
-		const color = new ColorRing (x, y, 0, presetFlagData [presetIndex].stripes [stripe]);
+		const color = new ColorRing (x, y, 0, presetFlagArray [presetIndex].stripes [stripe]);
 		points.push (color);
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
