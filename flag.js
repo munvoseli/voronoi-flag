@@ -14,6 +14,7 @@ const elImageOutput = document.getElementById ("image-output");
 const elWow = document.getElementById ("wow");
 const elFlagControls = document.getElementById ("flag-controls");
 const elClearFlagsButton = document.getElementById ("clear-flags-button");
+const elUseTaxicab = document.getElementById ("use-taxicab");
 
 var presetFlagData = `\
 # 0-stripe
@@ -373,6 +374,8 @@ function loadWeights ()
 }
 
 
+
+
 function generateFlagImage ()
 {
     var date = Date.now();
@@ -380,9 +383,12 @@ function generateFlagImage ()
     var canvasHeight = Number (elInputHeight.value);
     var distpoints = generatePoints (canvasWidth, canvasHeight);
     var weights = loadWeights ();
+    var useTaxicab = elUseTaxicab.checked;
+    setRingDistMode (useTaxicab);
     doThingWithColors = elWow.checked ? doThingWithColorsWow : doThingWithColorsDefault;
+    console.log (ColorRing.prototype.dist.call(distpoints [0], 0, 0, 5, 5));
     if (distpoints.length > 1 && weights.length > 0)
-	doVoronoiOptimized (distpoints, weights, elImageOutput, canvasWidth, canvasHeight);
+	doVoronoiOptimized (distpoints, weights, elImageOutput, canvasWidth, canvasHeight, useTaxicab);
     console.log (Date.now() - date + " ms");
 }
 
@@ -391,12 +397,12 @@ elSubmitButton.addEventListener ("click", function() {
 }, false);
 
 
-/*
+
 // for testing
-handleAddPresetId (10);
-handleAddPresetId (16);
-handleAddPresetId (18);
-handleAddPresetId (0);
+handleAddPresetId (8);
+handleAddPresetId (6);
+handleAddPresetId (12);
 handleAddPresetId (5);
+handleAddPresetId (7);
 generateFlagImage ();
-*/
+//*/

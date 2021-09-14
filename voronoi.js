@@ -79,10 +79,36 @@ class ColorRing
 	    dy = ch - dy;*/
 	return dx * dx + dy * dy;
     }
-    dist (x, y, cw, ch)
+    distTaxicab (x, y, cw, ch)
+    {
+	var dx = Math.abs (x - this.x);
+	var dy = Math.abs (y - this.y);
+	var hl = cw / 2;
+	dx = hl - Math.abs (dx - hl);
+	hl = ch / 2;
+	dy = hl - Math.abs (dy - hl);
+	return Math.abs (dx) + Math.abs (dy);
+    }
+    distEuclidian (x, y, cw, ch)
     {
 	return Math.abs(Math.sqrt(this.distSquareAsPoint (x, y, cw, ch)) - this.rad);
     }
+    distTaxicabFull (x, y, cw, ch)
+    {
+	return Math.abs(this.distTaxicab (x, y, cw, ch) - this.rad);
+    }
+    dist (x, y, cw, ch)
+    {
+	return this.distEuclidian (x, y, cw, ch);
+    }
+}
+
+function setRingDistMode (taxicab)
+{
+    if (taxicab)
+	ColorRing.prototype.dist = ColorRing.prototype.distTaxicab;
+    else
+	ColorRing.prototype.dist = ColorRing.prototype.distEuclidian;
 }
 
 function doThingWithColorsDefault (closestThings, nc, weights, cRelevantColor)
@@ -180,7 +206,7 @@ function getMinimumLength (distpoints)
 
 // this optimization assumes a euclidian-ish calculation for distance to the nearest point
 // it also assumes that you have at least 2 points
-function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canvasHeight)
+function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canvasHeight, taxicab)
 {
     var canvas = document.createElement ("canvas");
     var ctx = canvas.getContext ("2d");
@@ -188,6 +214,7 @@ function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canva
     canvas.height = canvasHeight;
     var imageData = new ImageData (canvas.width, canvas.height);
     var data = imageData.data;
+    const taxicabConstant = taxicab ? 2 : 2; // how much to scale squares down
     for (var i = 0; i < distpoints.length; ++i)
 	distpoints [i] = [-1, distpoints [i]];
     // the number of colors needed for the optimization calculation
@@ -203,6 +230,7 @@ function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canva
 	{
 	    if (data [(y * canvas.width + x) * 4 + 3] == 255)
 		continue;
+	    //console.log(JSON.stringify(distpoints));
 	    for (var i = 0; i < distpoints.length; ++i)
 		distpoints [i] [0] = distpoints [i] [1].dist (x, y, canvas.width, canvas.height);
 	    var closestThings = getClosestN (distpoints, cRelevantColorOpti);
@@ -210,7 +238,7 @@ function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canva
 	    squareColor [0] = doThingWithColors (closestThings, 0, weights, cRelevantColor);
 	    squareColor [1] = doThingWithColors (closestThings, 1, weights, cRelevantColor);
 	    squareColor [2] = doThingWithColors (closestThings, 2, weights, cRelevantColor);
-	    dist = dist >> 2;
+	    dist = dist >> taxicabConstant;
 	    //dist = Math.floor (dist / 2);
 	    fillSquare (x, y, dist, data, squareColor, canvas.width, canvas.height);
 	    ++nSquares;
