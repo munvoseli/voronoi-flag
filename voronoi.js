@@ -219,13 +219,13 @@ function getMinimumLength (distpoints)
 
 // this optimization assumes a euclidian-ish calculation for distance to the nearest point
 // it also assumes that you have at least 2 points
-function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canvasHeight, taxicab)
+
+
+function getVoronoiDataOptimized (distpoints, weights, canvasWidth, canvasHeight, taxicab)
 {
-    var canvas = document.createElement ("canvas");
-    var ctx = canvas.getContext ("2d");
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    var imageData = new ImageData (canvas.width, canvas.height);
+    var date = Date.now();
+    
+    var imageData = new ImageData (canvasWidth, canvasHeight);
     var data = imageData.data;
     const taxicabConstant = taxicab ? 2 : 2; // how much to scale squares down
     for (var i = 0; i < distpoints.length; ++i)
@@ -237,15 +237,15 @@ function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canva
     const cRelevantColor = Math.min (weights.length, distpoints.length);
     var squareColor = new Uint8Array (3);
     var nSquares = 0;
-    for (var y = 0; y < canvas.height; ++y)
+    for (var y = 0; y < canvasHeight; ++y)
     {
-	for (var x = 0; x < canvas.width; ++x)
+	for (var x = 0; x < canvasWidth; ++x)
 	{
-	    if (data [(y * canvas.width + x) * 4 + 3] == 255)
+	    if (data [(y * canvasWidth + x) * 4 + 3] == 255)
 		continue;
 	    //console.log(JSON.stringify(distpoints));
 	    for (var i = 0; i < distpoints.length; ++i)
-		distpoints [i] [0] = distpoints [i] [1].dist (x, y, canvas.width, canvas.height);
+		distpoints [i] [0] = distpoints [i] [1].dist (x, y, canvasWidth, canvasHeight);
 	    var closestThings = getClosestN (distpoints, cRelevantColorOpti);
 	    var dist = getMinimumLength (closestThings);
 	    squareColor [0] = doThingWithColors (closestThings, 0, weights, cRelevantColor);
@@ -253,12 +253,28 @@ function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canva
 	    squareColor [2] = doThingWithColors (closestThings, 2, weights, cRelevantColor);
 	    dist = dist >> taxicabConstant;
 	    //dist = Math.floor (dist / 2);
-	    fillSquare (x, y, dist, data, squareColor, canvas.width, canvas.height);
+	    fillSquare (x, y, dist, data, squareColor, canvasWidth, canvasHeight);
 	    ++nSquares;
 	}
     }
-    console.log (nSquares + " squares");
-    console.log ((canvas.width * canvas.height / nSquares) + " pixels per square (avg)");
+    console.log (nSquares + " squares\n"
+		 + (canvasWidth * canvasHeight / nSquares) + " pixels per square (avg)\n"
+		 + (Date.now() - date) + "ms");
+    return imageData;
+}
+
+function putDataOnImage (imageData, elImageOut)
+{
+    var canvas = document.createElement ("canvas");
+    var ctx = canvas.getContext ("2d");
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
     ctx.putImageData (imageData, 0, 0);
     elImageOut.src = canvas.toDataURL ("image/png");
+}
+
+function doVoronoiOptimized (distpoints, weights, elImageOut, canvasWidth, canvasHeight, taxicab)
+{
+    var imageData = getVoronoiDataOptimized (distpoints, weights, canvasWidth, canvasHeight, taxicab);
+    putDataOnImage (imageData, elImageOut);
 }
