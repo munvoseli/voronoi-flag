@@ -399,10 +399,13 @@ elSubmitButton.addEventListener ("click", function() {
 
 
 // for testing
-handleAddPresetId (8);
-handleAddPresetId (6);
-handleAddPresetId (12);
-handleAddPresetId (5);
-handleAddPresetId (7);
-generateFlagImage ();
+if (location.href [0] == "f")
+{
+    handleAddPresetId (8);
+    handleAddPresetId (6);
+    handleAddPresetId (12);
+    handleAddPresetId (5);
+    handleAddPresetId (7);
+    generateFlagImage ();
+}
 //*/
