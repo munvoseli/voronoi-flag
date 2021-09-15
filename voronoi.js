@@ -184,13 +184,14 @@ function fillSquare (x0, y0, l, data, color, canvasWidth, canvasHeight)
     {
 	for (var x = x0; x <= xf; ++x)
 	{
-	    if (data [pixChannelIndex] == 255)
+	    if (data [pixChannelIndex])
 	    {
 		xf = x - 1;
 		break;
 	    }
 	    pixChannelIndex += 4;
 	} // the existence of branch prediction may make this code slower
+	// no noticeable difference in speed
     }*/
     for (var y = y0; y <= yf; ++y)
     {
