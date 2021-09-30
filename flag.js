@@ -20,9 +20,6 @@ var presetFlagData = `\
 # 0-stripe
 
 intersex
-ffff00
-ffff00
-ffff00
 
 # 3-stripe
 
@@ -339,7 +336,9 @@ function generatePoints (canvasWidth, canvasHeight)
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
 	    {
-		points.push (new ColorRing (x, canvasHeight/2, Math.min(canvasWidth,canvasHeight)/4, "770077"));
+		points.push (new ColorRing (x, canvasHeight/2, Math.min(canvasWidth,canvasHeight)*.35, "ffd900"));
+		points.push (new ColorRing (x, canvasHeight/2, Math.min(canvasWidth,canvasHeight)*.25, "770099"));
+		points.push (new ColorRing (x, canvasHeight/2, Math.min(canvasWidth,canvasHeight)*.15, "ffd900"));
 	    }
 	}
     }
@@ -358,7 +357,9 @@ function generatePoints (canvasWidth, canvasHeight)
 	    }
 	    if (presetIndex == PRESET_INTERSEX)
 	    {
-		points.push (new ColorRing (canvasWidth/2, y, Math.min(canvasWidth,canvasHeight)/4, "770077"));
+		points.push (new ColorRing (canvasWidth/2, y, Math.min(canvasWidth,canvasHeight)*.35, "ffd900"));
+		points.push (new ColorRing (canvasWidth/2, y, Math.min(canvasWidth,canvasHeight)*.25, "770099"));
+		points.push (new ColorRing (canvasWidth/2, y, Math.min(canvasWidth,canvasHeight)*.15, "ffd900"));
 	    }
 	}
     }
@@ -408,11 +409,12 @@ elSubmitButton.addEventListener ("click", function() {
 // for testing
 if (location.href [0] == "f")
 {
-    handleAddPresetId (8);
+    /*handleAddPresetId (8);
     handleAddPresetId (6);
     handleAddPresetId (12);
     handleAddPresetId (5);
-    handleAddPresetId (7);
+    handleAddPresetId (7);*/
+    handleAddPresetId (0);
     generateFlagImage ();
 }
 //*/
