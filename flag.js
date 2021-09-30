@@ -99,6 +99,13 @@ ffffff
 aaaaaa
 000000
 
+omnisexual
+ff9bcd
+ff54be
+250046
+675fff
+8ca5ff
+
 lesbian
 d52d00
 ff9956
